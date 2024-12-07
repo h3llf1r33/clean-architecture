@@ -1,4 +1,5 @@
 import jsonpath from "jsonpath";
+import { InputType, OutputType } from "./interfaces/tests/DataMirror";
 
 type ArrayElementPaths<T> = T extends any
     ? T extends object
