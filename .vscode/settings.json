@@ -4,5 +4,6 @@
     "typescript.suggest.enabled": true,
     "typescript.suggest.paths": true,
     "typescript.suggestionActions.enabled": true,
-    "editor.suggestSelection": "first"
+    "editor.suggestSelection": "first",
+    "typescript.autoImportSuggestions.enabled": true
 }

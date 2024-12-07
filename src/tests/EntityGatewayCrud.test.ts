@@ -4,7 +4,6 @@ import { IFilterQuery } from "../lib/interfaces/IFilterQuery";
 import { IUser } from "../lib/interfaces/IUser";
 import { IHttpClient } from "../lib/interfaces/IHttpClient";
 import { HttpClient } from "../lib/HttpClient";
-import { MockServer } from "jest-mock-server";
 import { mockUser, mockUsers } from "../mock/User";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter"
@@ -13,7 +12,6 @@ const mock = new AxiosMockAdapter(axios);
 
 
 let BASE_URL = '';
-const server = new MockServer();
 
 mock.onGet("/users").reply(200, mockUsers(100));
 mock.onGet(/\/user\/\d+/).reply(200, mockUser);
@@ -22,9 +20,8 @@ mock.onPost("/user").reply(201, mockUser);
 mock.onDelete(/\/user\/\d+/).reply(200, true);
 
 class TestCrudGateway implements EntityGatewayCrud<
-    IUser, IUser, 
-    IFilterQuery, string, 
-    string, string, boolean
+    IUser, IUser, IFilterQuery, 
+    string, string, string, boolean
 > {
     constructor(private httpClient: IHttpClient){}
 
@@ -37,11 +34,14 @@ class TestCrudGateway implements EntityGatewayCrud<
     readList(query?: IFilterQuery): Observable<IUser[]> {
         return this.httpClient.get<IUser[]>("/users")
     }
-    update(identifier: string, query: Partial<IUser>): Observable<IUser> {
-        return this.httpClient.put<IUser>(`/user/${identifier}`, query)
+    update(entityId: string, query: Partial<IUser>): Observable<IUser> {
+        return this.httpClient.patch<IUser>(`/user/${entityId}`, query)
     }
-    delete(identifier: string): Observable<boolean> {
-        return this.httpClient.delete<boolean>(`/user/${identifier}`)
+    replace(entityId: string, query: Partial<IUser>): Observable<IUser> {
+        return this.httpClient.put<IUser>(`/user/${entityId}`, query)
+    }
+    delete(entityId: string): Observable<boolean> {
+        return this.httpClient.delete<boolean>(`/user/${entityId}`)
     }
 
 }
@@ -59,7 +59,7 @@ describe('', () => {
       const createData = await crudEntityGateway.create(mockUser).toPromise();
       expect(createData).toMatchSnapshot();
   
-      const updateData = await crudEntityGateway.update("1", mockUser).toPromise();
+      const updateData = await crudEntityGateway.replace("1", mockUser).toPromise();
       expect(updateData).toMatchSnapshot();
   
       const deleteData = await crudEntityGateway.delete("1").toPromise();

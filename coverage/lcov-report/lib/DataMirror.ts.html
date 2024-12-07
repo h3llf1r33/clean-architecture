@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.65% </span>
+                <span class="strong">95.83% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>22/23</span>
+                <span class='fraction'>23/24</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.45% </span>
+                <span class="strong">95.65% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>21/22</span>
+                <span class='fraction'>22/23</span>
             </div>
         
             
@@ -139,7 +139,37 @@
 <a name='L74'></a><a href='#L74'>74</a>
 <a name='L75'></a><a href='#L75'>75</a>
 <a name='L76'></a><a href='#L76'>76</a>
-<a name='L77'></a><a href='#L77'>77</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -215,31 +245,47 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export const jsonpath = require('jsonpath');
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import jsonpath from 'jsonpath';
 &nbsp;
-type ArrayElementPaths&lt;T&gt; = T extends any
-    ? T extends object
-        ? ObjectPaths&lt;T&gt;
-        : never
-    : never;
 &nbsp;
-type ObjectPaths&lt;T&gt; = T extends object
-    ? {
-        [P in keyof T]-?: 
-            | `['${P &amp; string}']`
-            | (T[P] extends Array&lt;infer U&gt;
-                ? `['${P &amp; string}'][*]` | `['${P &amp; string}'][*]${ArrayElementPaths&lt;U&gt;}`
-                : T[P] extends object | undefined
-                    ? `['${P &amp; string}']${ObjectPaths&lt;NonNullable&lt;T[P]&gt;&gt;}`
-                    : never)
-    }[keyof T]
-    : never;
+// Branded type to differentiate custom strings
+type CustomJsonPath = string &amp; { __brand?: 'CustomJsonPath' };
 &nbsp;
-type JsonPath&lt;T&gt; = `$${ObjectPaths&lt;T&gt;}`;
+// JSONPath for strongly-typed object paths
+type ArrayIndex = `[${number}]`;
+type ArraySlice = `[${number}:${number}]` | '[*]' | `[${number}:]` | `[:${number}]`;
+type ArrayAccess = ArrayIndex | ArraySlice;
 &nbsp;
+type PathPart&lt;T&gt; = T extends Array&lt;infer U&gt;
+    ? ArrayAccess
+    : keyof T &amp; string;
+&nbsp;
+type RecursivePath&lt;T&gt; = T extends Array&lt;infer U&gt;
+    ? `${ArrayAccess}${RecursivePath&lt;U&gt;}` | ArrayAccess
+    : T extends object
+        ? {
+              [K in keyof T &amp; string]: `['${K}']${RecursivePath&lt;T[K]&gt;}` | `['${K}']`;
+          }[keyof T &amp; string]
+        : '';
+&nbsp;
+// Strongly-typed JSONPath
+type JsonPath&lt;T&gt; = `$${RecursivePath&lt;T&gt;}`;
+&nbsp;
+// Final DataMirrorValue with free-form string support
+type DataMirrorValue&lt;Input, Output&gt; =
+    | JsonPath&lt;Input&gt; // Autocompleted paths
+    | CustomJsonPath  // Free-form strings
+    | ((input: Input) =&gt; Output);
+&nbsp;
+// DataMirror definition
 export type DataMirror&lt;Input, Output&gt; = {
-    [K in keyof Output]: JsonPath&lt;Input&gt; | string | ((input: Input) =&gt; Output[K] | string);
+    [K in keyof Output]: DataMirrorValue&lt;Input, Output[K]&gt;;
 };
+&nbsp;
+&nbsp;
+&nbsp;
  
  function hasCircular(obj: any): boolean {
     const seen = new WeakSet();
@@ -280,7 +326,7 @@ export function reflect&lt;Input, Output&gt;(mapping: DataMirror&lt;Input, Outpu
         }
  
         // Use query() for wildcards/filters/recursive queries
-        const value = jsonpath.query(input, extractor);
+        const value = jsonpath.query(input, extractor as string);
         
         if (value &amp;&amp; Array.isArray(value) &amp;&amp; value.some(hasCircular)) {
             throw new Error('Circular data structure detected.');
@@ -291,14 +337,16 @@ export function reflect&lt;Input, Output&gt;(mapping: DataMirror&lt;Input, Outpu
             [key]: value
         };
     }, {} as Output);
- }</pre></td></tr></table></pre>
+ }
+&nbsp;
+ export { jsonpath }</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-12-06T23:31:34.441Z
+                at 2024-12-07T18:06:04.500Z
             </div>
         <script src="../prettify.js"></script>
         <script>

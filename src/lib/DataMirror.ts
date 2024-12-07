@@ -1,29 +1,42 @@
-import jsonpath from "jsonpath";
-import { InputType, OutputType } from "./interfaces/tests/DataMirror";
+import jsonpath from 'jsonpath';
 
-type ArrayElementPaths<T> = T extends any
-    ? T extends object
-        ? ObjectPaths<T>
-        : never
-    : never;
 
-type ObjectPaths<T> = T extends object
-    ? {
-        [P in keyof T]-?: 
-            | `['${P & string}']`
-            | (T[P] extends Array<infer U>
-                ? `['${P & string}'][*]` | `['${P & string}'][*]${ArrayElementPaths<U>}`
-                : T[P] extends object | undefined
-                    ? `['${P & string}']${ObjectPaths<NonNullable<T[P]>>}`
-                    : never)
-    }[keyof T]
-    : never;
+// Branded type to differentiate custom strings
+type CustomJsonPath = string & { __brand?: 'CustomJsonPath' };
 
-type JsonPath<T> = `$${ObjectPaths<T>}`;
+// JSONPath for strongly-typed object paths
+type ArrayIndex = `[${number}]`;
+type ArraySlice = `[${number}:${number}]` | '[*]' | `[${number}:]` | `[:${number}]`;
+type ArrayAccess = ArrayIndex | ArraySlice;
 
+type PathPart<T> = T extends Array<infer U>
+    ? ArrayAccess
+    : keyof T & string;
+
+type RecursivePath<T> = T extends Array<infer U>
+    ? `${ArrayAccess}${RecursivePath<U>}` | ArrayAccess
+    : T extends object
+        ? {
+              [K in keyof T & string]: `['${K}']${RecursivePath<T[K]>}` | `['${K}']`;
+          }[keyof T & string]
+        : '';
+
+// Strongly-typed JSONPath
+type JsonPath<T> = `$${RecursivePath<T>}`;
+
+// Final DataMirrorValue with free-form string support
+type DataMirrorValue<Input, Output> =
+    | JsonPath<Input> // Autocompleted paths
+    | CustomJsonPath  // Free-form strings
+    | ((input: Input) => Output);
+
+// DataMirror definition
 export type DataMirror<Input, Output> = {
-    [K in keyof Output]: JsonPath<Input> | string | ((input: Input) => Output[K] | string);
+    [K in keyof Output]: DataMirrorValue<Input, Output[K]>;
 };
+
+
+
  
  function hasCircular(obj: any): boolean {
     const seen = new WeakSet();
