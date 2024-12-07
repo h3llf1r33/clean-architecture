@@ -6,8 +6,8 @@ import { IHttpClient } from "../lib/interfaces/IHttpClient";
 import { HttpClient } from "../lib/HttpClient";
 import { MockServer } from "jest-mock-server";
 import { mockUser, mockUsers } from "../mock/User";
-const axios = require("axios");
-const AxiosMockAdapter = require("axios-mock-adapter");
+import axios from "axios";
+import AxiosMockAdapter from "axios-mock-adapter"
 
 const mock = new AxiosMockAdapter(axios);
 

@@ -1,7 +1,7 @@
 import { from, Observable } from "rxjs";
 import { IHttpClient } from "./interfaces/IHttpClient";
 
-import axios = require("axios");
+import axios from "axios"
 
 export class HttpClient implements IHttpClient {
     public baseUrl = ""
@@ -28,6 +28,12 @@ export class HttpClient implements IHttpClient {
     }
     putAJAX<T>(path:string, body?: Record<string, any>, headers?: Record<string, string>): Observable<Axios.AxiosXHR<T>> {
         return from(this.httpClient.put<T>(this.baseUrl + path, body, {headers}))
+    }
+    patch<T>(path: string, body?: Record<string, any>, headers?: Record<string, string>): Observable<T> {
+        return from(this.httpClient.patch<T>(this.baseUrl + path, body, {headers}).then((resp) => resp.data))
+    }
+    patchAJAX<T>(path: string, body?: Record<string, any>, headers?: Record<string, string>): Observable<Axios.AxiosXHR<T>> {
+        return from(this.httpClient.patch<T>(this.baseUrl + path, body, {headers}))
     }
     delete<T>(path:string, headers?: Record<string, string>): Observable<T> {
         return from(this.httpClient.delete<T>(this.baseUrl + path, {headers}).then((resp) => resp.data))

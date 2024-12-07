@@ -11,6 +11,8 @@ export interface IHttpClient {
     postAJAX<T>(path:string, body?: Record<string, any>, headers?: Record<string, string>): Observable<Axios.AxiosXHR<T>>;
     put<T>(path:string, body?: Record<string, any>, headers?: Record<string, string>): Observable<T>;
     putAJAX<T>(path:string, body?: Record<string, any>, headers?: Record<string, string>): Observable<Axios.AxiosXHR<T>>;
+    patch<T>(path: string, body?: Record<string, any>, headers?: Record<string, string>): Observable<T>;
+    patchAJAX<T>(path: string, body?: Record<string, any>, headers?: Record<string, string>): Observable<Axios.AxiosXHR<T>>;
     delete<T>(path:string, headers?: Record<string, string>): Observable<T>;
     deleteAJAX<T>(path:string, headers?: Record<string, string>): Observable<Axios.AxiosXHR<T>>;
 }

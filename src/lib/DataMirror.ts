@@ -1,4 +1,4 @@
-export const jsonpath = require('jsonpath');
+import jsonpath from "jsonpath";
 
 type ArrayElementPaths<T> = T extends any
     ? T extends object
@@ -63,7 +63,7 @@ export function reflect<Input, Output>(mapping: DataMirror<Input, Output>, input
         }
  
         // Use query() for wildcards/filters/recursive queries
-        const value = jsonpath.query(input, extractor);
+        const value = jsonpath.query(input, extractor as string);
         
         if (value && Array.isArray(value) && value.some(hasCircular)) {
             throw new Error('Circular data structure detected.');
@@ -75,3 +75,5 @@ export function reflect<Input, Output>(mapping: DataMirror<Input, Output>, input
         };
     }, {} as Output);
  }
+
+ export { jsonpath }
