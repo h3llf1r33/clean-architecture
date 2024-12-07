@@ -1,0 +1,21 @@
+{
+  "name": "tsconfig.json",
+  "content": {
+    "compilerOptions": {
+      "target": "es2018",
+      "module": "commonjs",
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "strict": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true
+    },
+    "include": ["src/index.ts"], 
+    "exclude": ["node_modules", "dist", "**/__tests__/*"]
+  }
+}
