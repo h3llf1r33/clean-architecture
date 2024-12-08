@@ -21,7 +21,7 @@ test('should handle mixed function and path mappings', () => {
 
 test('should handle direct array access and array element property access', () => {
     const mirror: DataMirror<InputType, OutputType> = {
-        newName: "$['data']",
+        newName: "$['data'][*]['mapping']['test']['value']",
         newValue: "$['data'][*]['mapping']",
         key: "$['key']"
     }
@@ -60,6 +60,7 @@ test('should handle complex transformations', () => {
     const mirror: DataMirror<InputType, OutputType> = {
         newName: input => {
             const values = jsonpath.query(input, "$['data'][*]['mapping']['test']['value']");
+            console.warn('values', values,String(values.reduce((a:number,b:number) => Number(a)+Number(b), 0)))
             return String(values.reduce((a:number,b:number) => Number(a)+Number(b), 0));
         },
         newValue: "$['data'][*]['mapping']",

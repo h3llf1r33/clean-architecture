@@ -18,9 +18,9 @@ export function convertFilterToQueryParams(filter: IFilterQuery | IFilterQuery[]
         '=': 'eq',
         '!=': 'ne',
         'in': 'in',
-        'not in': 'notin',  // Changed this to 'notin'
+        'not in': 'notin',
         'like': 'like',
-        'not like': 'notlike'  // Changed this for consistency
+        'not like': 'notlike'
     };
 
     const params = filters.map(filter => {
@@ -50,7 +50,6 @@ export function convertFilterToQueryParams(filter: IFilterQuery | IFilterQuery[]
 
 
 export function parseQueryParamsToFilter(queryString: string): IFilterQuery[] {
-    // Remove the leading '?' if present
     const query = queryString.startsWith('?') ? queryString.slice(1) : queryString;
     if (!query) return [];
 
@@ -68,7 +67,6 @@ export function parseQueryParamsToFilter(queryString: string): IFilterQuery[] {
     };
 
     const filters = query.split('&').map(param => {
-        // Match the pattern fieldName[operator]=value
         const match = param.match(/^([^\[]+)\[([^\]]+)\]=(.+)$/);
         if (!match) return null;
 
@@ -80,7 +78,6 @@ export function parseQueryParamsToFilter(queryString: string): IFilterQuery[] {
         let value: string | number | object = decodeURIComponent(encodedValue);
         let fieldValue: string | number | object = field;
 
-        // Try to parse field as number or object if needed
         if (!isNaN(Number(field)) && field !== '') {
             fieldValue = Number(field);
         } else {
@@ -89,26 +86,21 @@ export function parseQueryParamsToFilter(queryString: string): IFilterQuery[] {
                     fieldValue = JSON.parse(field);
                 }
             } catch (e) {
-                // Keep as string if parsing fails
             }
         }
 
-        // Handle different value types
         if (mappedOperator === 'in' || mappedOperator === 'not in') {
             value = value.split(',');
         } else {
-            // Try to parse as number if possible
             const numberValue = Number(value);
             if (!isNaN(numberValue) && value !== '') {
                 value = numberValue;
             } else {
-                // Try to parse as object if it's JSON formatted
                 try {
                     if (value.startsWith('{') || value.startsWith('[')) {
                         value = JSON.parse(value);
                     }
                 } catch (e) {
-                    // Keep as string if parsing fails
                 }
             }
         }

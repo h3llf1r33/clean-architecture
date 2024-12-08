@@ -1,8 +1,7 @@
 import { AjaxResponse } from "rxjs/ajax";
 import { Observable } from "rxjs";
-import { HttpClient } from "../HttpClient"; // Assuming this is where your HttpClient class is
+import { HttpClient } from "../HttpClient";
 
-// Updated IHttpClient interface with constructor signature
 export interface IHttpClient {
     baseUrl:string
     get<T>(path:string, headers?: Record<string, string>): Observable<T>;

@@ -426,4 +426,11 @@ exports[` should be able to fetch data over each method 4`] = `
 }
 `;
 
-exports[` should be able to fetch data over each method 5`] = `true`;
+exports[` should be able to fetch data over each method 5`] = `
+{
+  "id": "1",
+  "name": "John Doe",
+}
+`;
+
+exports[` should be able to fetch data over each method 6`] = `true`;

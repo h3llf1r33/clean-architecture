@@ -16,6 +16,7 @@ let BASE_URL = '';
 mock.onGet("/users").reply(200, mockUsers(100));
 mock.onGet(/\/user\/\d+/).reply(200, mockUser);
 mock.onPut(/\/user\/\d+/).reply(200, mockUser);
+mock.onPatch(/\/user\/\d+/).reply(200, mockUser);
 mock.onPost("/user").reply(201, mockUser);
 mock.onDelete(/\/user\/\d+/).reply(200, true);
 
@@ -34,10 +35,10 @@ class TestCrudGateway implements EntityGatewayCrud<
     readList(query?: IFilterQuery): Observable<IUser[]> {
         return this.httpClient.get<IUser[]>("/users")
     }
-    update(entityId: string, query: Partial<IUser>): Observable<IUser> {
+    patchEntity(entityId: string, query: Partial<IUser>): Observable<IUser> {
         return this.httpClient.patch<IUser>(`/user/${entityId}`, query)
     }
-    replace(entityId: string, query: Partial<IUser>): Observable<IUser> {
+    replaceEntity(entityId: string, query: Partial<IUser>): Observable<IUser> {
         return this.httpClient.put<IUser>(`/user/${entityId}`, query)
     }
     delete(entityId: string): Observable<boolean> {
@@ -59,8 +60,11 @@ describe('', () => {
       const createData = await crudEntityGateway.create(mockUser).toPromise();
       expect(createData).toMatchSnapshot();
   
-      const updateData = await crudEntityGateway.replace("1", mockUser).toPromise();
-      expect(updateData).toMatchSnapshot();
+      const patchData = await crudEntityGateway.patchEntity("1", mockUser).toPromise();
+      expect(patchData).toMatchSnapshot();
+
+      const putData = await crudEntityGateway.replaceEntity("1", mockUser).toPromise();
+      expect(putData).toMatchSnapshot();
   
       const deleteData = await crudEntityGateway.delete("1").toPromise();
       expect(deleteData).toMatchSnapshot();

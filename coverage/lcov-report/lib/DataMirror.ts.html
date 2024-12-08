@@ -148,21 +148,7 @@
 <a name='L83'></a><a href='#L83'>83</a>
 <a name='L84'></a><a href='#L84'>84</a>
 <a name='L85'></a><a href='#L85'>85</a>
-<a name='L86'></a><a href='#L86'>86</a>
-<a name='L87'></a><a href='#L87'>87</a>
-<a name='L88'></a><a href='#L88'>88</a>
-<a name='L89'></a><a href='#L89'>89</a>
-<a name='L90'></a><a href='#L90'>90</a>
-<a name='L91'></a><a href='#L91'>91</a>
-<a name='L92'></a><a href='#L92'>92</a>
-<a name='L93'></a><a href='#L93'>93</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L86'></a><a href='#L86'>86</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -198,12 +184,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">20028x</span>
 <span class="cline-any cline-yes">20028x</span>
-<span class="cline-any cline-yes">20176x</span>
-<span class="cline-any cline-yes">135x</span>
-<span class="cline-any cline-yes">134x</span>
-<span class="cline-any cline-yes">134x</span>
+<span class="cline-any cline-yes">20165x</span>
+<span class="cline-any cline-yes">130x</span>
+<span class="cline-any cline-yes">129x</span>
+<span class="cline-any cline-yes">129x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">20041x</span>
+<span class="cline-any cline-yes">20035x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">20028x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -221,26 +207,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">35x</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">23x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -249,11 +235,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import jsonpath from 'jsonpath';
 &nbsp;
-&nbsp;
-// Branded type to differentiate custom strings
 type CustomJsonPath = string &amp; { __brand?: 'CustomJsonPath' };
-&nbsp;
-// JSONPath for strongly-typed object paths
 type ArrayIndex = `[${number}]`;
 type ArraySlice = `[${number}:${number}]` | '[*]' | `[${number}:]` | `[:${number}]`;
 type ArrayAccess = ArrayIndex | ArraySlice;
@@ -270,16 +252,13 @@ type RecursivePath&lt;T&gt; = T extends Array&lt;infer U&gt;
           }[keyof T &amp; string]
         : '';
 &nbsp;
-// Strongly-typed JSONPath
 type JsonPath&lt;T&gt; = `$${RecursivePath&lt;T&gt;}`;
 &nbsp;
-// Final DataMirrorValue with free-form string support
 type DataMirrorValue&lt;Input, Output&gt; =
-    | JsonPath&lt;Input&gt; // Autocompleted paths
-    | CustomJsonPath  // Free-form strings
+    | JsonPath&lt;Input&gt;
+    | CustomJsonPath
     | ((input: Input) =&gt; Output);
 &nbsp;
-// DataMirror definition
 export type DataMirror&lt;Input, Output&gt; = {
     [K in keyof Output]: DataMirrorValue&lt;Input, Output[K]&gt;;
 };
@@ -302,7 +281,7 @@ export type DataMirror&lt;Input, Output&gt; = {
 &nbsp;
 export function reflect&lt;Input, Output&gt;(mapping: DataMirror&lt;Input, Output&gt;, input: Input): Output {
     return Object.entries(mapping).reduce((result, [key, extractor]) =&gt; {
-        // For functions, just use the result directly
+        // Inline functions
         if (typeof extractor === 'function') {
             return {
                 ...result,
@@ -310,7 +289,7 @@ export function reflect&lt;Input, Output&gt;(mapping: DataMirror&lt;Input, Outpu
             };
         }
  
-        // For JSONPath
+        // JSONPath
         // Use value() for single path lookups without wildcards/filters
         if (typeof extractor === "string" &amp;&amp; !extractor.includes('*') &amp;&amp; !extractor.includes('?') &amp;&amp; !extractor.includes('..')) {
             const value = jsonpath.value(input, extractor);
@@ -346,7 +325,7 @@ export function reflect&lt;Input, Output&gt;(mapping: DataMirror&lt;Input, Outpu
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-12-07T18:06:04.500Z
+                at 2024-12-08T22:00:31.328Z
             </div>
         <script src="../prettify.js"></script>
         <script>

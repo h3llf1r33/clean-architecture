@@ -1,10 +1,6 @@
 import jsonpath from 'jsonpath';
 
-
-// Branded type to differentiate custom strings
 type CustomJsonPath = string & { __brand?: 'CustomJsonPath' };
-
-// JSONPath for strongly-typed object paths
 type ArrayIndex = `[${number}]`;
 type ArraySlice = `[${number}:${number}]` | '[*]' | `[${number}:]` | `[:${number}]`;
 type ArrayAccess = ArrayIndex | ArraySlice;
@@ -21,16 +17,13 @@ type RecursivePath<T> = T extends Array<infer U>
           }[keyof T & string]
         : '';
 
-// Strongly-typed JSONPath
 type JsonPath<T> = `$${RecursivePath<T>}`;
 
-// Final DataMirrorValue with free-form string support
 type DataMirrorValue<Input, Output> =
-    | JsonPath<Input> // Autocompleted paths
-    | CustomJsonPath  // Free-form strings
+    | JsonPath<Input>
+    | CustomJsonPath
     | ((input: Input) => Output);
 
-// DataMirror definition
 export type DataMirror<Input, Output> = {
     [K in keyof Output]: DataMirrorValue<Input, Output[K]>;
 };
@@ -53,7 +46,7 @@ export type DataMirror<Input, Output> = {
 
 export function reflect<Input, Output>(mapping: DataMirror<Input, Output>, input: Input): Output {
     return Object.entries(mapping).reduce((result, [key, extractor]) => {
-        // For functions, just use the result directly
+        // Inline functions
         if (typeof extractor === 'function') {
             return {
                 ...result,
@@ -61,7 +54,7 @@ export function reflect<Input, Output>(mapping: DataMirror<Input, Output>, input
             };
         }
  
-        // For JSONPath
+        // JSONPath
         // Use value() for single path lookups without wildcards/filters
         if (typeof extractor === "string" && !extractor.includes('*') && !extractor.includes('?') && !extractor.includes('..')) {
             const value = jsonpath.value(input, extractor);

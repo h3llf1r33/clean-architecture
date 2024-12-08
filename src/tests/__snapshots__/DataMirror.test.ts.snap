@@ -326,21 +326,7 @@ exports[`should handle direct array access and array element property access 1`]
 {
   "key": "InputData",
   "newName": [
-    1,
-    true,
-    false,
-    "hello world",
-    {
-      "name": "ITEM-1",
-    },
-    {
-      "mapping": {
-        "test": {
-          "value": 1001,
-        },
-      },
-      "name": "ITEM-2",
-    },
+    1001,
   ],
   "newValue": [
     {
