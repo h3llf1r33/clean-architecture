@@ -1,4 +1,4 @@
-export * from "./lib/DataMirror"
+export * from "./lib/DataReflector"
 export * from "./lib/HttpClient"
 
 

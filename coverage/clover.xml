@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1733695231360" clover="3.2.0">
-  <project timestamp="1733695231360" name="All files">
+<coverage generated="1733730205565" clover="3.2.0">
+  <project timestamp="1733730205565" name="All files">
     <metrics statements="49" coveredstatements="42" conditionals="21" coveredconditionals="18" methods="24" coveredmethods="18" elements="94" coveredelements="78" complexity="0" loc="49" ncloc="49" packages="3" files="4" classes="4"/>
     <package name="lib">
       <metrics statements="43" coveredstatements="36" conditionals="21" coveredconditionals="18" methods="22" coveredmethods="16"/>
-      <file name="DataMirror.ts" path="/Users/h3llf1r3/Programming/clean-architecture/src/lib/DataMirror.ts">
+      <file name="DataReflector.ts" path="/Users/h3llf1r3/Programming/clean-architecture/src/lib/DataReflector.ts">
         <metrics statements="23" coveredstatements="22" conditionals="18" coveredconditionals="17" methods="4" coveredmethods="4"/>
         <line num="1" count="1" type="stmt"/>
         <line num="35" count="20028" type="stmt"/>

@@ -19,13 +19,13 @@ type RecursivePath<T> = T extends Array<infer U>
 
 type JsonPath<T> = `$${RecursivePath<T>}`;
 
-type DataMirrorValue<Input, Output> =
+type DataReflectorValue<Input, Output> =
     | JsonPath<Input>
     | CustomJsonPath
     | ((input: Input) => Output);
 
-export type DataMirror<Input, Output> = {
-    [K in keyof Output]: DataMirrorValue<Input, Output[K]>;
+export type DataReflector<Input, Output> = {
+    [K in keyof Output]: DataReflectorValue<Input, Output[K]>;
 };
 
 
@@ -44,7 +44,7 @@ export type DataMirror<Input, Output> = {
     return detect(obj);
 }
 
-export function reflect<Input, Output>(mapping: DataMirror<Input, Output>, input: Input): Output {
+export function reflect<Input, Output>(mapping: DataReflector<Input, Output>, input: Input): Output {
     return Object.entries(mapping).reduce((result, [key, extractor]) => {
         // Inline functions
         if (typeof extractor === 'function') {

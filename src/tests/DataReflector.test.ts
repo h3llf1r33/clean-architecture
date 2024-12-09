@@ -1,8 +1,8 @@
 import { inputMockData, InputType, ObjectTestType, OutputType } from "../lib/interfaces/tests/DataMirror";
-import { DataMirror, reflect, jsonpath } from "../lib/DataMirror";
+import { DataReflector, reflect, jsonpath } from "../lib/DataReflector";
 
 test('should handle array paths with wildcards', () => {
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['mapping']['test']['value']",
         newValue: "$['data'][*]['mapping']",
         key: "$['key']"
@@ -11,7 +11,7 @@ test('should handle array paths with wildcards', () => {
 });
 
 test('should handle mixed function and path mappings', () => {
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['mapping']['test']['value']",
         newValue: input => String(input.data.length),
         key: "$['key']"
@@ -20,7 +20,7 @@ test('should handle mixed function and path mappings', () => {
 });
 
 test('should handle direct array access and array element property access', () => {
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['mapping']['test']['value']",
         newValue: "$['data'][*]['mapping']",
         key: "$['key']"
@@ -29,7 +29,7 @@ test('should handle direct array access and array element property access', () =
 });
 
 test('should handle nested functions', () => {
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['mapping']['test']['value']",
         newValue: input => JSON.stringify(input.data.filter(item => typeof item === 'object')),
         key: input => input.key.toUpperCase()
@@ -39,7 +39,7 @@ test('should handle nested functions', () => {
 
 test('should handle empty arrays', () => {
     const emptyInput = {...inputMockData, data: []};
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['mapping']['test']['value']",
         newValue: "$['data'][*]['mapping']",
         key: "$['key']"
@@ -48,7 +48,7 @@ test('should handle empty arrays', () => {
 });
 
 test('should handle valid paths only', () => {
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['name']",
         newValue: "$['data'][*]['mapping']",
         key: input => input.time
@@ -57,10 +57,9 @@ test('should handle valid paths only', () => {
 });
 
 test('should handle complex transformations', () => {
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: input => {
             const values = jsonpath.query(input, "$['data'][*]['mapping']['test']['value']");
-            console.warn('values', values,String(values.reduce((a:number,b:number) => Number(a)+Number(b), 0)))
             return String(values.reduce((a:number,b:number) => Number(a)+Number(b), 0));
         },
         newValue: "$['data'][*]['mapping']",
@@ -70,7 +69,7 @@ test('should handle complex transformations', () => {
 });
 
 test('should handle type coercion in functions', () => {
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['mapping']['test']['value']",
         newValue: input => String(Boolean(input.data.length)),
         key: input => String(Number(input.time))
@@ -82,7 +81,7 @@ test('should handle extremely large arrays', (done) => {
     done()
     const largeInput = {...inputMockData};
     largeInput.data = Array(10000).fill({ name: "TEST", mapping: { test: { value: 1 } } });
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['mapping']['test']['value']",
         newValue: "$['data'][*]['name']",
         key: "$['key']"
@@ -98,7 +97,7 @@ test('should handle extremely large arrays', (done) => {
     }
     deepInput.data = [deepObj];
     
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$..value",
         newValue: "$.data[0]", 
         key: "$['key']"
@@ -107,7 +106,7 @@ test('should handle extremely large arrays', (done) => {
  });
  
  test('should handle functions throwing errors', () => {
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: input => { throw new Error('Function error'); },
         newValue: "$['data']",
         key: "$['key']"
@@ -117,7 +116,7 @@ test('should handle extremely large arrays', (done) => {
  
  test('should handle malformed input', () => {
     const badInput = { ...inputMockData, data: undefined };
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]",
         newValue: "$['data']",
         key: "$['key']"
@@ -132,7 +131,7 @@ test('should handle extremely large arrays', (done) => {
         mapping: { test: { value: 42 } }
     } as ObjectTestType);
     
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['name']",
         newValue: input => input.data.map(x => 
             typeof x === 'object' && !Array.isArray(x) && 'name' in x ? x.name : ''
@@ -143,7 +142,7 @@ test('should handle extremely large arrays', (done) => {
 });
  
 test('should handle JSONPath logical operators and filters', () => {
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         // Get objects where mapping.test.value exists
         newName: "$.data[?(@.mapping && @.mapping.test && @.mapping.test.value)]",
         
@@ -152,7 +151,7 @@ test('should handle JSONPath logical operators and filters', () => {
         // Get the object where mapping.test.value inside data array equals 1002
         key: "$.data[?(@.mapping.test.value === 1002)]", 
     }
-    const anotherMirror: DataMirror<InputType, OutputType> = {
+    const anotherMirror: DataReflector<InputType, OutputType> = {
         // Get name where test.value > 1000
         newName: "$.data[?(@.mapping && @.mapping.test.value > 1000)]", 
         // Get all objects that have a mapping
@@ -174,7 +173,7 @@ test('should handle JSONPath logical operators and filters', () => {
     obj2.ref = obj1;
     recursiveInput.data.push(obj1, obj2);
     
-    const mirror: DataMirror<InputType, OutputType> = {
+    const mirror: DataReflector<InputType, OutputType> = {
         newName: "$['data'][*]['name']",
         newValue: "$['data'][*]['ref']",
         key: "$['key']"
